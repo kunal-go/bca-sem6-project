@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SetTeam"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/textTeamName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Team Name"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/textTeamCaptain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Captain"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 2"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 3"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 4"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 5"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 6"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 7"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 8"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 9"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 10"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <EditText
+                android:id="@+id/textTeamp11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player 11"
+                android:imeOptions="actionNext"
+                android:singleLine="true"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <Button
+                    android:onClick="submitTeam"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Next"/></LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>
+
