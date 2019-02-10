@@ -167,14 +167,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_PLAYER, null, values);
     }
 
-    public boolean hasMatchStarted(Context context){
+    public boolean hasMatchStarted(){
         SQLiteDatabase db = getReadableDatabase();
 
         String sql = "SELECT * " +
                 " FROM " + TABLE_INNING;
         Cursor cursor = db.rawQuery(sql, null);
 
-        Toast.makeText(context, cursor.getCount() + "", Toast.LENGTH_SHORT).show();
         if(cursor.getCount() > 0){
             return true;
         }

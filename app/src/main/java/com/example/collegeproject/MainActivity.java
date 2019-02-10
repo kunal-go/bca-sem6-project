@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
-        if(databaseHelper.hasMatchStarted(getApplicationContext())){
+        if(databaseHelper.hasMatchStarted()){
             Intent intent = new Intent(getApplicationContext(), Inning.class);
             startActivity(intent);
         }
