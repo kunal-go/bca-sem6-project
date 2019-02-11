@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Meta Data
     public static final String DATABASE_NAME = "Scoreboard.db";
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 10;
 
     //Tables
     public static final String TABLE_TEAM = "teams";
@@ -58,6 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BOWLER_BALLS = "balls";
     public static final String COLUMN_BOWLER_RUNS = "runs";
     public static final String COLUMN_BOWLER_WICKETS = "wickets";
+    public static final String COLUMN_BOWLER_STATUS = "status";
 
     //Create Table Queries
     public static final String CREATE_TABLE_TEAM = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAM + " (" +
@@ -100,7 +101,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_BOWLER_INNING + " NUMBER," +
             COLUMN_BOWLER_BALLS + " NUMBER NOT NULL DEFAULT 0," +
             COLUMN_BOWLER_RUNS + " NUMBER NOT NULL DEFAULT 0," +
-            COLUMN_BOWLER_WICKETS + " NUMBER NOT NULL DEFAULT 0" +
+            COLUMN_BOWLER_WICKETS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_BOWLER_STATUS + " NUMBER NOT NULL DEFAULT 0" +
             ")";
 
     public DatabaseHelper(Context context) {
@@ -291,14 +293,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllBatsmans(int inning){
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "SELECT " + COLUMN_INNING_TEAM +" FROM "+ TABLE_INNING +" WHERE "+ COLUMN_ID +" = ?";
-        Cursor cursor = db.rawQuery(sql , new String[]{inning + ""});
-        cursor.moveToNext();
-
         String sql2 = "SELECT * " +
                 " FROM " + TABLE_PLAYER +
                 " WHERE " + COLUMN_PLAYER_TEAM + " = ? ";
-        return db.rawQuery(sql2, new String[]{cursor.getLong(cursor.getColumnIndex(COLUMN_INNING_TEAM)) + ""});
+        return db.rawQuery(sql2, new String[]{getTeamId(inning) + ""});
+    }
+
+    public long getTeamId(int inning){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_INNING_TEAM +" FROM "+ TABLE_INNING +" WHERE "+ COLUMN_ID +" = ?";
+        Cursor cursor = db.rawQuery(sql , new String[]{inning + ""});
+        cursor.moveToNext();
+        return cursor.getLong(cursor.getColumnIndex(COLUMN_INNING_TEAM));
     }
 
     public int getNewBatsmanPosition(int inning){
@@ -323,6 +330,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         }
         catch (Exception e){
+            return false;
+        }
+    }
+
+    public boolean isBatsmanAdded(int inning, int player){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_ID +
+                " FROM " + TABLE_BATSMAN +
+                " WHERE " + COLUMN_BATSMAN_INNING + " = ? " +
+                " AND " + COLUMN_BATSMAN_PLAYER + " = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{
+                inning + "",
+                player + ""
+        });
+
+        if(cursor.getCount() > 0){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addBatsman(int inning, int player){
+        if(isBatsmanAdded(inning, player)){
+            return false;
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "INSERT INTO " + TABLE_BATSMAN + " ("+ COLUMN_BATSMAN_PLAYER +", "+ COLUMN_BATSMAN_TEAM +", "+ COLUMN_BATSMAN_INNING +", "+ COLUMN_BATSMAN_POSITION +")" +
+                " VALUES ("+ player +", "+ getTeamId(inning) +", "+ inning +", "+ getNewBatsmanPosition(inning) +")";
+        try{
+            db.execSQL(sql);
+            return true;
+        }
+        catch(Exception e){
             return false;
         }
     }

@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,5 +54,20 @@ public class SelectBatsman extends AppCompatActivity {
 
         ListBatsmanCustomAdaptor listBatsmanCustomAdaptor = new ListBatsmanCustomAdaptor(getApplicationContext(), R.layout.batsman_list_list_view, playersList);
         listView.setAdapter(listBatsmanCustomAdaptor);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                cursor.moveToPosition(position);
+                if(databaseHelper.addBatsman(inning, cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)))){
+                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), Inning.class);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(SelectBatsman.this, "Batsman not added", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }
