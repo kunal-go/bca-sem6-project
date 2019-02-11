@@ -293,10 +293,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllBatsmans(int inning){
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "SELECT * " +
+        String sql = "SELECT " + COLUMN_INNING_TEAM +" FROM "+ TABLE_INNING +" WHERE "+ COLUMN_ID +" = ?";
+        Cursor cursor = db.rawQuery(sql , new String[]{inning + ""});
+        cursor.moveToNext();
+
+        String sql2 = "SELECT * " +
                 " FROM " + TABLE_PLAYER +
-                " WHERE " + COLUMN_PLAYER_TEAM + " = " + " (SELECT " + COLUMN_INNING_TEAM +" FROM "+ TABLE_INNING +" WHERE "+ COLUMN_ID+" = ?) ";
-        return db.rawQuery(sql, new String[]{inning + ""});
+                " WHERE " + COLUMN_PLAYER_TEAM + " = ? ";
+        return db.rawQuery(sql2, new String[]{cursor.getLong(cursor.getColumnIndex(COLUMN_INNING_TEAM)) + ""});
     }
 
     public int getNewBatsmanPosition(int inning){

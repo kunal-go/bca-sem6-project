@@ -39,7 +39,6 @@ public class SelectBatsman extends AppCompatActivity {
         }
 
         header.setText("Select Batsamn at no " + nextPosition);
-        Toast.makeText(getApplicationContext(), inning + "", Toast.LENGTH_SHORT);
 
         cursor = databaseHelper.getAllBatsmans(inning);
         while (cursor.moveToNext()){
