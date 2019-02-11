@@ -5,9 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
-import com.example.collegeproject.SetToss;
 import com.example.collegeproject.model.Team;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Meta Data
     public static final String DATABASE_NAME = "Scoreboard.db";
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
 
     //Tables
     public static final String TABLE_TEAM = "teams";
@@ -90,9 +88,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_BATSMAN_TEAM + " NUMBER," +
             COLUMN_BATSMAN_INNING + " NUMBER," +
             COLUMN_BATSMAN_POSITION + " NUMBER," +
-            COLUMN_BATSMAN_RUNS + " NUMBER DEFAULT 0," +
-            COLUMN_BATSMAN_BALLS + " NUMBER DEFAULT 0," +
-            COLUMN_BATSMAN_STATUS + " NUMBER DEFAULT 0" +
+            COLUMN_BATSMAN_RUNS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_BATSMAN_BALLS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_BATSMAN_STATUS + " NUMBER NOT NULL DEFAULT 0" +
             ")";
 
     public static final String CREATE_TABLE_BOWLER = "CREATE TABLE IF NOT EXISTS " + TABLE_BOWLER + " (" +
@@ -100,9 +98,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_BOWLER_PLAYER + " NUMBER," +
             COLUMN_BOWLER_TEAM + " NUMBER," +
             COLUMN_BOWLER_INNING + " NUMBER," +
-            COLUMN_BOWLER_BALLS + " NUMBER," +
-            COLUMN_BOWLER_RUNS + " NUMBER DEFAULT 0," +
-            COLUMN_BOWLER_WICKETS + " NUMBER DEFAULT 0" +
+            COLUMN_BOWLER_BALLS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_BOWLER_RUNS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_BOWLER_WICKETS + " NUMBER NOT NULL DEFAULT 0" +
             ")";
 
     public DatabaseHelper(Context context) {
