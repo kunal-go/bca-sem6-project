@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SelectBatsman"></activity>
+        <activity android:name=".SelectBowler"></activity>
+        <activity android:name=".SelectBatsman" />
         <activity android:name=".Inning" />
         <activity android:name=".SetToss" />
         <activity android:name=".SetTeam" />

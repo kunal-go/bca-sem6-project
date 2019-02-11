@@ -308,6 +308,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return cursor.getLong(cursor.getColumnIndex(COLUMN_INNING_TEAM));
     }
 
+    public long getBowlingTeamId(int inning){
+        int otherInning = 2;
+        if(inning == 2){
+            otherInning = 1;
+        }
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_INNING_TEAM +" FROM "+ TABLE_INNING +" WHERE "+ COLUMN_ID +" = ?";
+        Cursor cursor = db.rawQuery(sql , new String[]{otherInning + ""});
+        cursor.moveToNext();
+        return cursor.getLong(cursor.getColumnIndex(COLUMN_INNING_TEAM));
+    }
+
     public int getNewBatsmanPosition(int inning){
         SQLiteDatabase db = getReadableDatabase();
 
@@ -352,6 +365,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean isBowlerAdded(int inning, int player){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_ID +
+                " FROM " + TABLE_BOWLER +
+                " WHERE " + COLUMN_BOWLER_INNING + " = ? " +
+                " AND " + COLUMN_BOWLER_PLAYER + " = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{
+                inning + "",
+                player + ""
+        });
+
+        if(cursor.getCount() > 0){
+            return true;
+        }
+        return false;
+    }
+
+    public String getPlayerName(int player){
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT " + COLUMN_PLAYER_NAME +
+                " FROM " + TABLE_PLAYER +
+                " WHERE " + COLUMN_ID + " = " + player;
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+        return cursor.getString(cursor.getColumnIndex(COLUMN_PLAYER_NAME));
+    }
+
     public boolean addBatsman(int inning, int player){
         if(isBatsmanAdded(inning, player)){
             return false;
@@ -366,6 +407,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         catch(Exception e){
             return false;
+        }
+    }
+
+    public Cursor getCurrentBowlers(int inning){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT * " +
+                " FROM " + TABLE_BOWLER +
+                " WHERE " + COLUMN_BOWLER_INNING + " = ? AND " +
+                COLUMN_BOWLER_STATUS + " = ?";
+        return db.rawQuery(sql, new String[]{inning + "", "1"});
+    }
+
+    public Cursor getAllBowlers(int inning){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT * " +
+                " FROM " + TABLE_PLAYER +
+                " WHERE " + COLUMN_PLAYER_TEAM + " = ? ";
+        return db.rawQuery(sql, new String[]{getBowlingTeamId(inning) + ""});
+    }
+
+    public boolean addBowler(int inning, int player){
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "INSERT INTO " + TABLE_BOWLER + " ("+ COLUMN_BOWLER_PLAYER +", "+ COLUMN_BOWLER_TEAM +", "+ COLUMN_BOWLER_INNING +", "+ COLUMN_BOWLER_STATUS +")" +
+                " VALUES ("+ player +", "+ getBowlingTeamId(inning) +", "+ inning +", 1)";
+
+        if(isBowlerAdded(inning, player)){
+           sql = "UPDATE " + TABLE_BOWLER + " SET " + COLUMN_BOWLER_STATUS + " = 1" +
+                   " WHERE " + COLUMN_BOWLER_PLAYER + " = " + player;
+        }
+
+        String sql2 = "UPDATE " + TABLE_BOWLER + " SET " + COLUMN_BOWLER_STATUS + " = 0";
+
+        db.beginTransaction();
+        try{
+            db.execSQL(sql2);
+            db.execSQL(sql);
+
+            db.setTransactionSuccessful();
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
+        finally {
+            db.endTransaction();
         }
     }
 

@@ -94,12 +94,14 @@
                     android:padding="5dp"
                     android:textSize="20dp"/>
                 <TextView
+                    android:id="@+id/bowlerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bowler"
                     android:textColor="#000"
                     android:textSize="20dp"/>
                 <Button
+                    android:onClick="changeBowler"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Change"/>
