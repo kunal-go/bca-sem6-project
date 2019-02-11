@@ -67,7 +67,7 @@ public class SetToss extends AppCompatActivity {
 
                 cursor.moveToPosition(position);
                 if(databaseHelper.setInning(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)), overs)){
-                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT);
+                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), Inning.class);
                     startActivity(intent);
                 }

@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Meta Data
     public static final String DATABASE_NAME = "Scoreboard.db";
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
 
     //Tables
     public static final String TABLE_TEAM = "teams";
@@ -78,10 +78,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             COLUMN_ID + " INTEGER PRIMARY KEY, " +
             COLUMN_INNING_TEAM + " NUMBER," +
             COLUMN_INNING_OVERS + " NUMBER," +
-            COLUMN_INNING_DECLARE + " NUMBER DEFAULT 0," +
-            COLUMN_INNING_RUNS + " NUMBER DEFAULT 0," +
-            COLUMN_INNING_WICKETS + " NUMBER DEFAULT 0," +
-            COLUMN_INNING_BALLS + " NUMBER DEFAULT 0" +
+            COLUMN_INNING_DECLARE + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_INNING_RUNS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_INNING_WICKETS + " NUMBER NOT NULL DEFAULT 0," +
+            COLUMN_INNING_BALLS + " NUMBER NOT NULL DEFAULT 0" +
             ")";
 
     public static final String CREATE_TABLE_BATSMAN = "CREATE TABLE IF NOT EXISTS " + TABLE_BATSMAN + " (" +
@@ -170,16 +170,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean hasMatchStarted(){
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "SELECT * " +
-                " FROM " + TABLE_INNING;
-        Cursor cursor = db.rawQuery(sql, null);
+        Cursor cursor = db.query(TABLE_INNING, new String[]{COLUMN_ID}, null, null, null, null, null);
 
         if(cursor.getCount() > 0){
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     public long addCaptain(long team, String name){
@@ -253,9 +249,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
         try {
-            db.insert(TABLE_INNING, null, values);
-            db.insert(TABLE_INNING, null, values2);
-            return true;
+            if(db.insert(TABLE_INNING, null, values) > 0){
+                if(db.insert(TABLE_INNING, null, values2) > 0){
+                    return true;
+                }
+            }
+            throw new Exception();
         }
         catch (Exception e){
             return false;
