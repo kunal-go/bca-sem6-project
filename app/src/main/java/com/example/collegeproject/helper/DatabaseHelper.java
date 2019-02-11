@@ -242,26 +242,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             bat_second = 2;
         }
 
-        ContentValues values2 = new ContentValues();
-        values2.put(COLUMN_ID, 2);
-        values2.put(COLUMN_INNING_TEAM, bat_second);
-        values2.put(COLUMN_INNING_OVERS, overs);
+//        ContentValues values2 = new ContentValues();
+//        values2.put(COLUMN_ID, 2);
+//        values2.put(COLUMN_INNING_TEAM, bat_second);
+//        values2.put(COLUMN_INNING_OVERS, overs);
+//
+//        db.beginTransaction();
+//        try {
+//            if(db.insert(TABLE_INNING, null, values) > 0){
+//                if(db.insert(TABLE_INNING, null, values2) > 0){
+//                    return true;
+//                }
+//            }
+//            throw new Exception();
+//        }
+//        catch (Exception e){
+//            return false;
+//        }
+//        finally {
+//            db.endTransaction();
+//        }
 
-        db.beginTransaction();
+        String sql = "INSERT INTO " + TABLE_INNING + " ("+ COLUMN_ID+", "+ COLUMN_INNING_TEAM +", "+ COLUMN_INNING_OVERS +")" +
+                " VALUES ("+ 1 +", "+ bat_first_team +", "+ overs +")";
+
+        String sql2 = "INSERT INTO " + TABLE_INNING + " ("+ COLUMN_ID+", "+ COLUMN_INNING_TEAM +", "+ COLUMN_INNING_OVERS +")" +
+                " VALUES ("+ 2 +", "+ bat_second +", "+ overs +")";
+
         try {
-            if(db.insert(TABLE_INNING, null, values) > 0){
-                if(db.insert(TABLE_INNING, null, values2) > 0){
-                    return true;
-                }
-            }
-            throw new Exception();
+            db.execSQL(sql);
+            db.execSQL(sql2);
+            return true;
         }
         catch (Exception e){
             return false;
         }
-        finally {
-            db.endTransaction();
-        }
+
     }
 
     public Cursor getCurrentBatsmans(int inning){
@@ -314,5 +330,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.delete(TABLE_TEAM, null, null);
         db.delete(TABLE_PLAYER, null, null);
+        db.delete(TABLE_INNING, null , null );
+        db.delete(TABLE_BATSMAN, null , null );
+        db.delete(TABLE_BOWLER, null , null );
     }
 }
