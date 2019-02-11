@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Meta Data
     public static final String DATABASE_NAME = "Scoreboard.db";
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 12;
 
     //Tables
     public static final String TABLE_TEAM = "teams";
@@ -213,20 +213,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean isInningDeclared(int inning){
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = "SELECT " + COLUMN_INNING_DECLARE +
+        String sql = "SELECT *" +
                 " FROM " + TABLE_INNING +
-                " WHERE " + COLUMN_ID + " = ?";
-        Cursor cursor = db.rawQuery(sql, new String[]{inning + ""});
+                " WHERE " + COLUMN_ID + " = " + inning +
+                " AND " + COLUMN_INNING_DECLARE + " = 1";
+        Cursor cursor = db.rawQuery(sql, null);
 
-        if(!cursor.moveToFirst()) {
-            return false;
-        }
-        else if(cursor.getInt(cursor.getColumnIndex(COLUMN_INNING_DECLARE)) == 1){
+        if(cursor.getCount() > 0){
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
     }
 
     public boolean setInning(int bat_first_team, int overs){
