@@ -67,4 +67,8 @@ public class Inning extends AppCompatActivity {
         intent.putExtra("inning", inning);
         startActivity(intent);
     }
+
+    public void submitBall(View view) {
+        Toast.makeText(getApplicationContext(), "Submit Button Clicked", Toast.LENGTH_SHORT).show();
+    }
 }

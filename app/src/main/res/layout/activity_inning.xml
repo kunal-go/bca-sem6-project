@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="10"
-            android:layout_margin="15dp">
+            android:layout_margin="10dp">
             <TextView
                 android:id="@+id/scorePanel"
                 android:gravity="center"
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:text="Batsmans"
                     android:padding="5dp"
-                    android:textSize="20dp"/>
+                    android:textSize="15dp"/>
                 <RadioGroup
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -72,14 +72,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Batsman 1"
-                        android:textSize="20dp"
+                        android:textSize="15dp"
                         android:checked="true"/>
                     <RadioButton
                         android:id="@+id/scoreBatsman2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Batsman 2"
-                        android:textSize="20dp"/>
+                        android:textSize="15dp"/>
                 </RadioGroup>
             </LinearLayout>
             <LinearLayout
@@ -92,14 +92,14 @@
                     android:layout_height="wrap_content"
                     android:text="Bowlers"
                     android:padding="5dp"
-                    android:textSize="20dp"/>
+                    android:textSize="15dp"/>
                 <TextView
                     android:id="@+id/bowlerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bowler"
                     android:textColor="#000"
-                    android:textSize="20dp"/>
+                    android:textSize="15dp"/>
                 <Button
                     android:onClick="changeBowler"
                     android:layout_width="wrap_content"
@@ -129,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:text="Delivery"
                         android:padding="5dp"
-                        android:textSize="20dp"/>
+                        android:textSize="15dp"/>
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -138,20 +138,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Legal"
-                            android:textSize="20dp"
+                            android:textSize="15dp"
                             android:checked="true"/>
                         <RadioButton
                             android:id="@+id/deliveryWide"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Wide"
-                            android:textSize="20dp"/>
+                            android:textSize="15dp"/>
                         <RadioButton
                             android:id="@+id/deliveryNoBall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="No Ball"
-                            android:textSize="20dp"/>
+                            android:textSize="15dp"/>
                     </RadioGroup>
                 </LinearLayout>
 
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:text="Runs Through"
                         android:padding="5dp"
-                        android:textSize="20dp"/>
+                        android:textSize="15dp"/>
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -175,21 +175,113 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Bat"
-                            android:textSize="20dp"
+                            android:textSize="15dp"
                             android:checked="true"/>
                         <RadioButton
                             android:id="@+id/throughBye"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Bye"
-                            android:textSize="20dp"/>
+                            android:textSize="15dp"/>
                         <RadioButton
                             android:id="@+id/throughLegBye"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Leg Bye"
-                            android:textSize="20dp"/>
+                            android:textSize="15dp"/>
                     </RadioGroup>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="10"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="6">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Wicket"
+                        android:padding="5dp"
+                        android:textSize="20dp"/>
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <RadioButton
+                            android:id="@+id/wicketNoWicket"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No Wicket"
+                            android:textSize="15dp"
+                            android:checked="true"/>
+                        <RadioButton
+                            android:id="@+id/wicketBowled"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bowled / Caught / Stumping"
+                            android:textSize="15dp"/>
+                        <RadioButton
+                            android:id="@+id/wicketRunOutStriker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Run Out (Striker)"
+                            android:textSize="15dp"/>
+                        <RadioButton
+                            android:id="@+id/wicketRunOutNonStriker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Run Out (Non Striker)"
+                            android:textSize="15dp"/>
+                        <RadioButton
+                            android:id="@+id/wicketDeclare"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Declare"
+                            android:textSize="15dp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="4">
+
+                    <EditText
+                        android:id="@+id/editTextRuns"
+                        android:inputType="number"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Runs"
+                        android:layout_margin="5dp"/>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:background="@color/colorPrimary"
+                        android:textColor="#fff"
+                        android:text="Submit"
+                        android:onClick="submitBall"/>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:background="@color/colorAccent"
+                        android:textColor="#fff"
+                        android:text="Terminate"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
