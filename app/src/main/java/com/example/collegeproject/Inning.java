@@ -97,8 +97,8 @@ public class Inning extends AppCompatActivity {
 
                         if ((limit * 6) <= balls) {
                             Toast.makeText(getApplicationContext(), "Terminate Innings", Toast.LENGTH_LONG).show();
-                            //            databaseHelper.declareInning(inning);
-                            //            restartActivity();
+                            databaseHelper.declareInning(inning);
+                            restartActivity();
                         }
                     }
                     else {
