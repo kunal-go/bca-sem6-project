@@ -549,22 +549,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 batsmanRuns += runs;
             }
             batsmanBall++;
-        }
-
-        String sqlTeam = "UPDATE " + TABLE_INNING +
-                " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
-                COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
-                COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
-                " WHERE " + COLUMN_ID + " = " + inning;
-        String sqlBatsman = "UPDATE " + TABLE_BATSMAN +
-                " SET " + COLUMN_BATSMAN_RUNS + " = " + COLUMN_BATSMAN_RUNS + " + " + batsmanRuns + ", " +
-                COLUMN_BATSMAN_BALLS + " = " + COLUMN_BATSMAN_BALLS + " + " + batsmanBall +
-                " WHERE " + COLUMN_ID + " = " + striker;
-        String sqlBowler = "UPDATE " + TABLE_BOWLER +
-                " SET " + COLUMN_BOWLER_RUNS + " = " + COLUMN_BOWLER_RUNS + " + " + bowlerRuns + ", " +
-                COLUMN_BOWLER_BALLS + " = " + COLUMN_BOWLER_BALLS + " + " + bowlerBall + ", " +
-                COLUMN_BOWLER_WICKETS + " = " + COLUMN_BOWLER_WICKETS + " + " + bowlerWicket +
-                " WHERE " + COLUMN_ID + " = " + bowler;                ;
+        }             ;
 
         db.beginTransaction();
         try {
@@ -580,6 +565,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     batsmanOut(striker);
                 }
             }
+
+            String sqlTeam = "UPDATE " + TABLE_INNING +
+                    " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
+                    COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
+                    COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
+                    " WHERE " + COLUMN_ID + " = " + inning;
+            String sqlBatsman = "UPDATE " + TABLE_BATSMAN +
+                    " SET " + COLUMN_BATSMAN_RUNS + " = " + COLUMN_BATSMAN_RUNS + " + " + batsmanRuns + ", " +
+                    COLUMN_BATSMAN_BALLS + " = " + COLUMN_BATSMAN_BALLS + " + " + batsmanBall +
+                    " WHERE " + COLUMN_ID + " = " + striker;
+            String sqlBowler = "UPDATE " + TABLE_BOWLER +
+                    " SET " + COLUMN_BOWLER_RUNS + " = " + COLUMN_BOWLER_RUNS + " + " + bowlerRuns + ", " +
+                    COLUMN_BOWLER_BALLS + " = " + COLUMN_BOWLER_BALLS + " + " + bowlerBall + ", " +
+                    COLUMN_BOWLER_WICKETS + " = " + COLUMN_BOWLER_WICKETS + " + " + bowlerWicket +
+                    " WHERE " + COLUMN_ID + " = " + bowler;
 
             db.execSQL(sqlTeam);
             db.execSQL(sqlBatsman);
