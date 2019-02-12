@@ -11,7 +11,7 @@ public class splashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SystemClock.sleep(1500);
+        SystemClock.sleep(500);
 
         Intent intent = new Intent(this, MainActivity.class);
 

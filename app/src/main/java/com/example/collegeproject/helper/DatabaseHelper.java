@@ -1,5 +1,6 @@
 package com.example.collegeproject.helper;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Database Meta Data
     public static final String DATABASE_NAME = "Scoreboard.db";
-    public static final int DATABASE_VERSION = 13;
+    public static final int DATABASE_VERSION = 15;
 
     //Tables
     public static final String TABLE_TEAM = "teams";
@@ -210,6 +211,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String sql = "SELECT * " +
                 " FROM " + TABLE_TEAM ;
         return db.rawQuery(sql, null);
+    }
+
+    public String getBattingTeamName(int inning){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_INNING_TEAM +
+                " FROM " + TABLE_INNING +
+                " WHERE " + COLUMN_ID + " = " + inning;
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToNext();
+        int teamId = cursor.getInt(cursor.getColumnIndex(COLUMN_INNING_TEAM));
+
+        String sql2 = "SELECT " + COLUMN_TEAM_NAME +
+                " FROM " + TABLE_TEAM +
+                " WHERE " + COLUMN_ID + " = " + teamId;
+        Cursor cursor1 = db.rawQuery(sql2, null);
+        cursor1.moveToNext();
+
+        return cursor1.getString(cursor1.getColumnIndex(COLUMN_TEAM_NAME));
     }
 
     public boolean isInningDeclared(int inning){
@@ -472,76 +492,76 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         String sql = "UPDATE " + TABLE_BATSMAN +
-            " SET " + COLUMN_BATSMAN_STATUS + " = 1" +
-            " WHERE " + COLUMN_ID + " = " + batsman;
+                " SET " + COLUMN_BATSMAN_STATUS + " = 1" +
+                " WHERE " + COLUMN_ID + " = " + batsman;
         db.execSQL(sql);
     }
 
     public boolean submitBall(int inning, int striker, int nonStriker, int bowler, int delivery, int runsThrough, int wicket, int runs){
-        if(isInningDeclared(inning)){
-            return false;
-        }
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        int teamRuns = 0,
-            teamWicket = 0,
-            batsmanRuns = 0,
-            batsmanBall= 0,
-            bowlerRuns = 0,
-            bowlerBall = 0,
-            bowlerWicket = 0;
-
-        int ballsLimit, ballsPlayed;
-
-        Cursor cursorInning = getInningScore(inning);
-        cursorInning.moveToNext();
-
-        int oversLimit = cursorInning.getInt(cursorInning.getColumnIndex(COLUMN_INNING_OVERS));
-        ballsLimit = oversLimit * 6;
-        ballsPlayed = cursorInning.getInt(cursorInning.getColumnIndex(COLUMN_INNING_BALLS));
-
-        if(ballsPlayed >= ballsLimit){
-            declareInning(inning);
-        }
-
-        teamRuns += runs;
-        if(delivery == 1){
-            bowlerBall++;
-        }
-        else if(delivery == 2){
-            teamRuns++;
-            bowlerRuns++;
-            bowlerRuns += runs;
-        }
-        else if(delivery == 3){
-            teamRuns++;
-            bowlerRuns++;
-            bowlerRuns += runs;
-        }
-
-        if(delivery == 1 || delivery == 3){
-            if(runsThrough == 1){
-                bowlerRuns += runs;
-                batsmanRuns += runs;
-            }
-            batsmanBall++;
-            teamRuns += runs;
-        }
-
-        String sqlTeam = "UPDATE " + TABLE_INNING +
-                " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
-                COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
-                COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
-                " WHERE " + COLUMN_ID + " = " + inning;
-        String sqlBatsman = "UPDATE " + TABLE_INNING +
-                " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
-                COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
-                COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
-                " WHERE " + COLUMN_ID + " = " + inning;                  ;
-
-        db.beginTransaction();
-        try {
+//        if(isInningDeclared(inning)){
+//            return false;
+//        }
+//
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        int teamRuns = 0,
+//                teamWicket = 0,
+//                batsmanRuns = 0,
+//                batsmanBall= 0,
+//                bowlerRuns = 0,
+//                bowlerBall = 0,
+//                bowlerWicket = 0;
+//
+//        int ballsLimit, ballsPlayed;
+//
+//        Cursor cursorInning = getInningScore(inning);
+//        cursorInning.moveToNext();
+//
+//        int oversLimit = cursorInning.getInt(cursorInning.getColumnIndex(COLUMN_INNING_OVERS));
+//        ballsLimit = oversLimit * 6;
+//        ballsPlayed = cursorInning.getInt(cursorInning.getColumnIndex(COLUMN_INNING_BALLS));
+//
+//        if(ballsPlayed >= ballsLimit){
+//            declareInning(inning);
+//        }
+//
+//        teamRuns += runs;
+//        if(delivery == 1){
+//            bowlerBall++;
+//        }
+//        else if(delivery == 2){
+//            teamRuns++;
+//            bowlerRuns++;
+//            bowlerRuns += runs;
+//        }
+//        else if(delivery == 3){
+//            teamRuns++;
+//            bowlerRuns++;
+//            bowlerRuns += runs;
+//        }
+//
+//        if(delivery == 1 || delivery == 3){
+//            if(runsThrough == 1){
+//                bowlerRuns += runs;
+//                batsmanRuns += runs;
+//            }
+//            batsmanBall++;
+//            teamRuns += runs;
+//        }
+//
+//        String sqlTeam = "UPDATE " + TABLE_INNING +
+//                " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
+//                COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
+//                COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
+//                " WHERE " + COLUMN_ID + " = " + inning;
+//        String sqlBatsman = "UPDATE " + TABLE_INNING +
+//                " SET " + COLUMN_INNING_RUNS + " = " + COLUMN_INNING_RUNS + " + " + teamRuns + ", " +
+//                COLUMN_INNING_BALLS + " = " + COLUMN_INNING_BALLS + " + " + bowlerBall + ", " +
+//                COLUMN_INNING_WICKETS + " = " + COLUMN_INNING_WICKETS + " + " + teamWicket +
+//                " WHERE " + COLUMN_ID + " = " + inning;                  ;
+//
+//        db.beginTransaction();
+//        try {
 //            if (wicket > 0) {
 //                teamWicket++;
 //                if(wicket == 2){
@@ -557,14 +577,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //            db.execSQL(sqlTeam);
 //
 //            db.setTransactionSuccessful();
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
-        finally {
-            db.endTransaction();
-        }
+//            return true;
+//        }
+//        catch (Exception e){
+//            return false;
+//        }
+//        finally {
+//            db.endTransaction();
+//        }
+        return true;
     }
 
     public void resetDatabase(){

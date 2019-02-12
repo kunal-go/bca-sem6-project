@@ -22,9 +22,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), Inning.class);
             startActivity(intent);
         }
-        else{
-            Toast.makeText(getApplicationContext(), "Match not Started", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void setTeam1(View view) {

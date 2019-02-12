@@ -16,7 +16,7 @@ import com.example.collegeproject.helper.DatabaseHelper;
 
 public class Inning extends AppCompatActivity {
     int inning, batsman1, batsman2, bowler;
-    TextView bowlerView, overPanel, scorePanel;
+    TextView bowlerView, overPanel, scorePanel, teamNamePanel;
 
     RadioButton batsman1Radio, batsman2Radio;
     RadioButton deliveryLegal, deliveryWide, deliveryNoBall;
@@ -59,79 +59,109 @@ public class Inning extends AppCompatActivity {
             inning = 2;
         }
         else{
-
+            Toast.makeText(getApplicationContext(), "Match Finished", Toast.LENGTH_SHORT).show();
         }
 
-        int limit, balls, runs, wickets, overBalls, overs;
+//        Toast.makeText(getApplicationContext(), inning + "", Toast.LENGTH_SHORT).show();
 
-        overPanel = findViewById(R.id.overPanel);
-        scorePanel = findViewById(R.id.scorePanel);
+        try {
+            int limit, balls, runs, wickets, overBalls, overs;
 
-        Cursor scoreCursor = databaseHelper.getInningScore(inning);
-        scoreCursor.moveToNext();
+            overPanel = findViewById(R.id.overPanel);
+            scorePanel = findViewById(R.id.scorePanel);
+            teamNamePanel = findViewById(R.id.battingTeamName);
 
-        limit = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_OVERS));
-        balls = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_BALLS));
+            try{
+                String teamName = databaseHelper.getBattingTeamName(inning);
+                teamNamePanel.setText(teamName + " (Inning " + inning + ")");
+            }
+            catch (Exception e){
+                Toast.makeText(getApplicationContext(), "Fetching Team Name Failed : " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
-        overBalls = balls % 6;
-        overs = (balls - overBalls) / 6;
-        overPanel.setText(overs + "." + overBalls + " (" + limit + ")");
+            try{
+                Cursor scoreCursor = databaseHelper.getInningScore(inning);
+                if(scoreCursor.getCount() > 0) {
+                    if(scoreCursor.moveToNext()) {
+                        limit = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_OVERS));
+                        balls = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_BALLS));
 
-        runs = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_RUNS));
-        wickets = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_WICKETS));
+                        overBalls = balls % 6;
+                        overs = (balls - overBalls) / 6;
+                        overPanel.setText(overs + "." + overBalls + " (" + limit + ")");
 
-        scorePanel.setText(runs + " - " + wickets);
+                        runs = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_RUNS));
+                        wickets = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_WICKETS));
 
-        if((limit * 6) >= balls){
-            databaseHelper.declareInning(inning);
-            restartActivity();
+                        scorePanel.setText(runs + " - " + wickets);
+
+                        if ((limit * 6) <= balls) {
+                            Toast.makeText(getApplicationContext(), "Terminate Innings", Toast.LENGTH_LONG).show();
+                            //            databaseHelper.declareInning(inning);
+                            //            restartActivity();
+                        }
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "No Score Found", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "No Score Found", Toast.LENGTH_LONG).show();
+                }
+            }
+            catch (Exception e){
+                Toast.makeText(getApplicationContext(), "Score Panel : " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            Cursor cursorBatsmans = databaseHelper.getCurrentBatsmans(inning);
+            if (cursorBatsmans.getCount() < 2) {
+                Intent intent = new Intent(getApplicationContext(), SelectBatsman.class);
+                intent.putExtra("inning", inning);
+                startActivity(intent);
+            }
+
+            Cursor cursorBowlers = databaseHelper.getCurrentBowlers(inning);
+            if (cursorBowlers.getCount() < 1) {
+                Intent intent = new Intent(getApplicationContext(), SelectBowler.class);
+                intent.putExtra("inning", inning);
+                startActivity(intent);
+            }
+
+            if (cursorBatsmans.getCount() == 2 && cursorBowlers.getCount() == 1) {
+                batsman1Radio = findViewById(R.id.scoreBatsman1);
+                batsman2Radio = findViewById(R.id.scoreBatsman2);
+                bowlerView = findViewById(R.id.bowlerView);
+
+                cursorBatsmans.moveToNext();
+                batsman1Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
+                batsman1 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
+                cursorBatsmans.moveToNext();
+                batsman2Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
+                batsman2 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
+
+                cursorBowlers.moveToNext();
+                bowlerView.setText(databaseHelper.getPlayerName(cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_BOWLER_PLAYER))));
+                bowler = cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_ID));
+
+                deliveryLegal = findViewById(R.id.deliveryLegal);
+                deliveryNoBall = findViewById(R.id.deliveryNoBall);
+                deliveryWide = findViewById(R.id.deliveryWide);
+
+                runsBat = findViewById(R.id.throughBat);
+                runsBye = findViewById(R.id.throughBye);
+                runsLegBye = findViewById(R.id.throughLegBye);
+
+                wicketNo = findViewById(R.id.wicketNoWicket);
+                wicketNormal = findViewById(R.id.wicketBowled);
+                wicketRunoutStriker = findViewById(R.id.wicketRunOutStriker);
+                wicketRunOutNonStriker = findViewById(R.id.wicketRunOutNonStriker);
+                wicketDeclare = findViewById(R.id.wicketDeclare);
+
+                textRuns = findViewById(R.id.editTextRuns);
+            }
         }
-
-        Cursor cursorBatsmans = databaseHelper.getCurrentBatsmans(inning);
-        if(cursorBatsmans.getCount() < 2){
-            Intent intent = new Intent(getApplicationContext(), SelectBatsman.class);
-            intent.putExtra("inning", inning);
-            startActivity(intent);
-        }
-
-        Cursor cursorBowlers = databaseHelper.getCurrentBowlers(inning);
-        if(cursorBowlers.getCount() < 1){
-            Intent intent = new Intent(getApplicationContext(), SelectBowler.class);
-            intent.putExtra("inning", inning);
-            startActivity(intent);
-        }
-
-        if(cursorBatsmans.getCount() == 2 && cursorBowlers.getCount() == 1){
-            batsman1Radio = findViewById(R.id.scoreBatsman1);
-            batsman2Radio = findViewById(R.id.scoreBatsman2);
-            bowlerView = findViewById(R.id.bowlerView);
-
-            cursorBatsmans.moveToNext();
-            batsman1Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
-            batsman1 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
-            cursorBatsmans.moveToNext();
-            batsman2Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
-            batsman2 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
-
-            cursorBowlers.moveToNext();
-            bowlerView.setText(databaseHelper.getPlayerName(cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_BOWLER_PLAYER))));
-            bowler = cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_ID));
-
-            deliveryLegal = findViewById(R.id.deliveryLegal);
-            deliveryNoBall = findViewById(R.id.deliveryNoBall);
-            deliveryWide = findViewById(R.id.deliveryWide);
-
-            runsBat = findViewById(R.id.throughBat);
-            runsBye = findViewById(R.id.throughBye);
-            runsLegBye = findViewById(R.id.throughLegBye);
-
-            wicketNo = findViewById(R.id.wicketNoWicket);
-            wicketNormal = findViewById(R.id.wicketBowled);
-            wicketRunoutStriker = findViewById(R.id.wicketRunOutStriker);
-            wicketRunOutNonStriker = findViewById(R.id.wicketRunOutNonStriker);
-            wicketDeclare = findViewById(R.id.wicketDeclare);
-
-            textRuns = findViewById(R.id.editTextRuns);
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -229,5 +259,12 @@ public class Inning extends AppCompatActivity {
     public void restartActivity(){
         finish();
         startActivity(getIntent());
+    }
+
+    public void resetMatch(View view) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+        databaseHelper.resetDatabase();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 }

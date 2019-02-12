@@ -60,7 +60,7 @@ public class SelectBatsman extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 cursor.moveToPosition(position);
                 if(databaseHelper.addBatsman(inning, cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)))){
-                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), Inning.class);
                     startActivity(intent);
                 }
