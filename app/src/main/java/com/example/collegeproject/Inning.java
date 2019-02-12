@@ -6,16 +6,44 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.collegeproject.helper.DatabaseHelper;
 
 public class Inning extends AppCompatActivity {
-    int inning;
+    int inning, batsman1, batsman2, bowler;
+    TextView bowlerView, overPanel, scorePanel;
+
     RadioButton batsman1Radio, batsman2Radio;
-    TextView bowlerView, overPanel;
+    RadioButton deliveryLegal, deliveryWide, deliveryNoBall;
+    RadioButton runsBat, runsBye, runsLegBye;
+    RadioButton wicketNo, wicketNormal, wicketRunoutStriker, wicketRunOutNonStriker, wicketDeclare;
+
+    EditText textRuns;
+
+    /*
+        Deliveries:
+           1: Legal
+           2: Wide
+           3: No Ball
+
+        Runs Through:
+            1: Bat
+            2: Bye
+            3: Leg Bye
+
+        Wicket
+            1: No Wicket
+            2: Bowled / Caught / Stumping
+            3: Run Out (Striker)
+            4: Run Out (Non-Striker)
+            5: Declare
+    */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +62,10 @@ public class Inning extends AppCompatActivity {
 
         }
 
-        int limit, balls, runs, overBalls;
-        double overs;
+        int limit, balls, runs, wickets, overBalls, overs;
+
         overPanel = findViewById(R.id.overPanel);
+        scorePanel = findViewById(R.id.scorePanel);
 
         Cursor scoreCursor = databaseHelper.getInningScore(inning);
         scoreCursor.moveToNext();
@@ -45,8 +74,18 @@ public class Inning extends AppCompatActivity {
         balls = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_BALLS));
 
         overBalls = balls % 6;
-        overs = Math.ceil(balls/6);
+        overs = (balls - overBalls) / 6;
         overPanel.setText(overs + "." + overBalls + " (" + limit + ")");
+
+        runs = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_RUNS));
+        wickets = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_WICKETS));
+
+        scorePanel.setText(runs + " - " + wickets);
+
+        if((limit * 6) >= balls){
+            databaseHelper.declareInning(inning);
+            restartActivity();
+        }
 
         Cursor cursorBatsmans = databaseHelper.getCurrentBatsmans(inning);
         if(cursorBatsmans.getCount() < 2){
@@ -62,18 +101,101 @@ public class Inning extends AppCompatActivity {
             startActivity(intent);
         }
 
-        batsman1Radio = findViewById(R.id.scoreBatsman1);
-        batsman2Radio = findViewById(R.id.scoreBatsman2);
-        bowlerView = findViewById(R.id.bowlerView);
+        if(cursorBatsmans.getCount() == 2 && cursorBowlers.getCount() == 1){
+            batsman1Radio = findViewById(R.id.scoreBatsman1);
+            batsman2Radio = findViewById(R.id.scoreBatsman2);
+            bowlerView = findViewById(R.id.bowlerView);
 
-        cursorBatsmans.moveToNext();
-        batsman1Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
-        cursorBatsmans.moveToNext();
-        batsman2Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
+            cursorBatsmans.moveToNext();
+            batsman1Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
+            batsman1 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
+            cursorBatsmans.moveToNext();
+            batsman2Radio.setText(databaseHelper.getPlayerName(cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_BATSMAN_PLAYER))));
+            batsman2 = cursorBatsmans.getInt(cursorBatsmans.getColumnIndex(DatabaseHelper.COLUMN_ID));
 
-        cursorBowlers.moveToNext();
-        bowlerView.setText(databaseHelper.getPlayerName(cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_BOWLER_PLAYER))));
+            cursorBowlers.moveToNext();
+            bowlerView.setText(databaseHelper.getPlayerName(cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_BOWLER_PLAYER))));
+            bowler = cursorBowlers.getInt(cursorBowlers.getColumnIndex(DatabaseHelper.COLUMN_ID));
 
+            deliveryLegal = findViewById(R.id.deliveryLegal);
+            deliveryNoBall = findViewById(R.id.deliveryNoBall);
+            deliveryWide = findViewById(R.id.deliveryWide);
+
+            runsBat = findViewById(R.id.throughBat);
+            runsBye = findViewById(R.id.throughBye);
+            runsLegBye = findViewById(R.id.throughLegBye);
+
+            wicketNo = findViewById(R.id.wicketNoWicket);
+            wicketNormal = findViewById(R.id.wicketBowled);
+            wicketRunoutStriker = findViewById(R.id.wicketRunOutStriker);
+            wicketRunOutNonStriker = findViewById(R.id.wicketRunOutNonStriker);
+            wicketDeclare = findViewById(R.id.wicketDeclare);
+
+            textRuns = findViewById(R.id.editTextRuns);
+        }
+    }
+
+    public int getDelivery(){
+        if(deliveryLegal.isChecked()){
+            return 1;
+        }
+        else if(deliveryWide.isChecked()){
+            return 2;
+        }
+        else if(deliveryNoBall.isChecked()){
+            return 3;
+        }
+        return 1;
+    }
+
+    public int getRunsThrough(){
+        if(runsBat.isChecked()){
+            return 1;
+        }
+        else if(runsBye.isChecked()){
+            return 2;
+        }
+        else if(runsLegBye.isChecked()){
+            return 3;
+        }
+        return 1;
+    }
+
+    public int getWicket(){
+        if(wicketNo.isChecked()){
+            return 1;
+        }
+        else if(wicketNormal.isChecked()){
+            return 2;
+        }
+        else if(wicketRunoutStriker.isChecked()){
+            return 3;
+        }
+        else if(wicketRunOutNonStriker.isChecked()){
+            return 4;
+        }
+        else if(wicketDeclare.isChecked()){
+            return 5;
+        }
+        return 1;
+    }
+
+    public int getStriker(){
+        if(batsman1Radio.isChecked()){
+            return batsman1;
+        }
+        else{
+            return batsman2;
+        }
+    }
+
+    public int getNonStriker(){
+        if(batsman1Radio.isChecked()){
+            return batsman2;
+        }
+        else{
+            return batsman1;
+        }
     }
 
     public void changeBowler(View view) {
@@ -83,7 +205,28 @@ public class Inning extends AppCompatActivity {
     }
 
     public void submitBall(View view) {
-        Toast.makeText(getApplicationContext(), "Submit Button Clicked", Toast.LENGTH_SHORT).show();
+        int runs;
+
+        try {
+            runs = Integer.parseInt(textRuns.getText().toString().trim());
+        }
+        catch(Exception e){
+            Toast.makeText(getApplicationContext(), "Invalid Runs", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(runs >= 0){
+            DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+            databaseHelper.submitBall(inning, getStriker(), getNonStriker(), bowler, getDelivery(), getRunsThrough(), getWicket(), runs);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Invalid Runs", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        restartActivity();
+    }
+
+    public void restartActivity(){
         finish();
         startActivity(getIntent());
     }
