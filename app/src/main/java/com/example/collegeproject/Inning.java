@@ -15,7 +15,7 @@ import com.example.collegeproject.helper.DatabaseHelper;
 public class Inning extends AppCompatActivity {
     int inning;
     RadioButton batsman1Radio, batsman2Radio;
-    TextView bowlerView;
+    TextView bowlerView, overPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,20 @@ public class Inning extends AppCompatActivity {
         else{
 
         }
+
+        int limit, balls, runs, overBalls;
+        double overs;
+        overPanel = findViewById(R.id.overPanel);
+
+        Cursor scoreCursor = databaseHelper.getInningScore(inning);
+        scoreCursor.moveToNext();
+
+        limit = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_OVERS));
+        balls = scoreCursor.getInt(scoreCursor.getColumnIndex(DatabaseHelper.COLUMN_INNING_BALLS));
+
+        overBalls = balls % 6;
+        overs = Math.ceil(balls/6);
+        overPanel.setText(overs + "." + overBalls + " (" + limit + ")");
 
         Cursor cursorBatsmans = databaseHelper.getCurrentBatsmans(inning);
         if(cursorBatsmans.getCount() < 2){
@@ -70,5 +84,7 @@ public class Inning extends AppCompatActivity {
 
     public void submitBall(View view) {
         Toast.makeText(getApplicationContext(), "Submit Button Clicked", Toast.LENGTH_SHORT).show();
+        finish();
+        startActivity(getIntent());
     }
 }

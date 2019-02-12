@@ -425,6 +425,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(sql, new String[]{getBowlingTeamId(inning) + ""});
     }
 
+    public Cursor getInningScore(int inning){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT * " +
+                " FROM " + TABLE_INNING +
+                " WHERE " + COLUMN_ID + " = " + inning;
+        return db.rawQuery(sql, null);
+    }
+
     public boolean addBowler(int inning, int player){
         SQLiteDatabase db = getWritableDatabase();
         String sql = "INSERT INTO " + TABLE_BOWLER + " ("+ COLUMN_BOWLER_PLAYER +", "+ COLUMN_BOWLER_TEAM +", "+ COLUMN_BOWLER_INNING +", "+ COLUMN_BOWLER_STATUS +")" +
